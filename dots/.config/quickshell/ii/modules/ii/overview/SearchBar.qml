@@ -14,6 +14,7 @@ RowLayout {
     property bool animateWidth: false
     property alias searchInput: searchInput
     property string searchingText
+    property var firstResult
 
     function forceFocus() {
         searchInput.forceActiveFocus();
@@ -81,17 +82,21 @@ RowLayout {
         onTextChanged: LauncherSearch.query = text
 
         onAccepted: {
-            if (appResults.count > 0) {
-                // Get the first visible delegate and trigger its click
-                let firstItem = appResults.itemAtIndex(0);
-                if (firstItem && firstItem.clicked) {
-                    firstItem.clicked();
-                }
+            if (root.searchPrefixType === SearchBar.SearchPrefixType.Clipboard && root.firstResult?.cliphistRawString) {
+                Cliphist.paste(root.firstResult.cliphistRawString);
+                GlobalStates.overviewOpen = false;
+            } else if (root.firstResult?.clicked) {
+                root.firstResult.clicked();
             }
         }
 
         Keys.onPressed: event => {
-            if (event.key === Qt.Key_Tab) {
+            if (event.key === Qt.Key_C && event.modifiers & Qt.ControlModifier
+                    && root.searchPrefixType === SearchBar.SearchPrefixType.Clipboard
+                    && root.firstResult?.cliphistRawString) {
+                Cliphist.copy(root.firstResult.cliphistRawString);
+                event.accepted = true;
+            } else if (event.key === Qt.Key_Tab) {
                 if (LauncherSearch.results.length === 0) return;
                 const tabbedText = LauncherSearch.results[0].name;
                 LauncherSearch.query = tabbedText;

@@ -114,9 +114,17 @@ RippleButton {
             if (deleteAction) {
                 deleteAction.execute()
             }
+        } else if (event.key === Qt.Key_C && event.modifiers & Qt.ControlModifier && root.cliphistRawString) {
+            Cliphist.copy(root.cliphistRawString)
+            event.accepted = true;
         } else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
             root.keyboardDown = true
-            root.clicked()
+            if (root.cliphistRawString) {
+                Cliphist.paste(root.cliphistRawString)
+                GlobalStates.overviewOpen = false
+            } else {
+                root.clicked()
+            }
             event.accepted = true;
         }
     }

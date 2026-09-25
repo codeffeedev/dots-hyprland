@@ -139,6 +139,7 @@ Item { // Wrapper
 
             SearchBar {
                 id: searchBar
+                firstResult: appResults.itemAtIndex(0)
                 property real verticalPadding: 4
                 Layout.fillWidth: true
                 Layout.leftMargin: 10
